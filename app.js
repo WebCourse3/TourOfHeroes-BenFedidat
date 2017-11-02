@@ -20,6 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.set('view engine', 'jade');
 
 app.use('/', index);
 app.use('/users', users);
@@ -33,41 +34,43 @@ app.get('/heroes', (req, res) => {
     res.send(heroes);
 });
 app.get('/heroes/:id', (req, res) => {
-  var hero = heroes.find(hero => hero.id == req.params.id);
+  var hero = heroes.find(hero => hero.id === parseInt(req.params.id));
   if(!hero)
     return res.status(404).send("hero not found");
   return res.send(hero);
 });
 app.put('/heroes/:id', (req, res) => {
-  if(req.params.id != req.body.id) {
-    return res.status(400).send("inconsistent id");
-  }
-  if(heroes.find(hero => hero.id === req.body.id)) {
-    return res.status(400).send("hero already exists");
+  if(!req.body.id || !req.params.id) {
+    return res.status(400).send("missing id");
   }
   if(!req.body.name) {
     return res.status(400).send("missing name");
   }
-  heroes.push({"id": req.body.id, "name": req.body.name});
+  if(!heroes.find(hero => hero.id === parseInt(req.params.id))) {
+    return res.status(400).send("hero not found");
+  }
+  if(heroes.find(hero => hero.id === parseInt(req.body.id))) {
+    return res.status(400).send("id already exists");
+  }
+  var heroIndex = heroes.findIndex(hero => hero.id === parseInt(req.params.id));
+  heroes[heroIndex] = {"id": parseInt(req.body.id), "name": req.body.name};
   return res.send("success");
 });
 app.post('/heroes', (req, res) => {
   if(!req.body.id) {
     return res.status(400).send("missing id");
   }
+  if(heroes.find(hero => hero.id === parseInt(req.body.id))) {
+    return res.status(400).send("hero already exists");
+  }
   if(!req.body.name) {
     return res.status(400).send("missing name");
   }
-  if(!heroes.find(hero => hero.id == req.body.id)) {
-    heroes.push({"id": req.body.id, "name": req.body.name});
-  }
-  else {
-    heroes.find(hero => hero.id === req.body.id).name = req.body.name;
-  }
+  heroes.push({"id": parseInt(req.body.id), "name": req.body.name});
   return res.send("success");
 });
 app.delete('/heroes/:id', (req, res) => {
-  var index = heroes.findIndex(hero => hero.id == req.params.id);
+  var index = heroes.findIndex(hero => hero.id === parseInt(req.params.id));
   if (index < 0) {
     return res.status(404).send("hero not found");
   }
@@ -78,7 +81,7 @@ app.delete('/heroes', (req, res) => {
   if(!req.query.name) {
     return res.status(400).send("missing name");
   }
-  var index = heroes.findIndex(hero => hero.name == req.query.name);
+  var index = heroes.findIndex(hero => hero.name === parseInt(req.query.name));
   if (index < 0) {
     return res.status(404).send("hero not found");
   }
