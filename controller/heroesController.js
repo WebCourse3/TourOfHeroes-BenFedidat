@@ -5,11 +5,15 @@ class HeroesController {
     constructor(heroesModel) { 
         this.heroesModel = heroesModel;
     }
-
+    
     get heroes() {
         return this.heroesModel.heroes;
     }
-    
+
+    getHeroes() {
+        return this.heroes;
+    }
+
     getHeroById(id) {  
         var hero = this.heroes.find(hero => hero.id === parseInt(id));
         if(!hero)

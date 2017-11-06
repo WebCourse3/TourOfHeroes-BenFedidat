@@ -4,7 +4,7 @@ var HeroesList = require('../model/heroesList.js');
 var Hero = require('../model/hero.js');
 
 describe('HeroesController', function() {
-  
+
     describe('#heroes()', function() {
       it('should return list of heroes', function() {
         var heroesList = new HeroesList();
