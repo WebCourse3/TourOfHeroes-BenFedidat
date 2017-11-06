@@ -7,6 +7,7 @@ class HeroesController {
     }
 
     get heroes() {
+        console.log("-----------------HEROESLIST-------------");
         return this.heroesModel.heroes;
     }
     
