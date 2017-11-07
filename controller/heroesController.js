@@ -1,18 +1,19 @@
 "use strict";
+var Hero = require('../model/hero.js');
 
 class HeroesController {
-    constructor() { 
-        this.heroesArray = [
-            {"id": 1, name:"superman"}, 
-            {"id": 2, name:"batman"}, 
-            {"id": 3, name:"green lantern"}
-        ];
-    }
-
-    get heroes() {
-        return this.heroesArray;
+    constructor(heroesModel) { 
+        this.heroesModel = heroesModel;
     }
     
+    get heroes() {
+        return this.heroesModel.heroes;
+    }
+
+    getHeroes() {
+        return this.heroes;
+    }
+
     getHeroById(id) {  
         var hero = this.heroes.find(hero => hero.id === parseInt(id));
         if(!hero)
@@ -28,14 +29,14 @@ class HeroesController {
         if(this.heroes.find(hero => hero.id === newId)) {
             throw "id already exists";
         }
-        this.heroes[heroIndex] = {"id": newId, "name": newName};
+        this.heroes[heroIndex] = new Hero(newId, newName);
     }
 
     insertHero(id, name) {
         if(this.heroes.find(hero => hero.id === id)) {
             return res.status(400).send("hero already exists");
         }
-        this.heroes.push({"id": id, "name": name});
+        this.heroes.push(new Hero(id, name));
     }
 
     deleteHeroById(id) {

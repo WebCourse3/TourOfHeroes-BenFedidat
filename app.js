@@ -6,8 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
-var heroes = require('./routes/heroes');
+var heroesRouter = require('./routes/heroes');
+var heroes = heroesRouter.server;
 
 var app = express();
 
@@ -24,9 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'jade');
 
 app.use('/', index);
-app.use('/users', users);
 app.use('/heroes', heroes);
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -50,4 +48,7 @@ app.listen(3000, function () {
   console.log('Tour of Heroes')
 })
 
-module.exports = app;
+module.exports = {server:app,
+  setController: (controller) => {
+    heroesRouter.setController(controller);
+  }}

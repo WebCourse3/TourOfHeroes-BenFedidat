@@ -1,11 +1,12 @@
 var express = require('express');
 var router = express.Router();
 var HeroesController = require('../controller/heroesController.js');
+var HeroesList = require('../model/heroesList.js');
 
-var heroesController = new HeroesController();
+var heroesController = new HeroesController(new HeroesList());
 
 router.get('/', (req, res) => {
-    res.send(heroesController.heroes);
+    res.send(heroesController.getHeroes());
 });
 
 router.get('/:id', (req, res) => {
@@ -67,4 +68,7 @@ router.delete('/', (req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = {server:router,
+    setController: (controller) => {
+        heroesController = controller;
+    }}
